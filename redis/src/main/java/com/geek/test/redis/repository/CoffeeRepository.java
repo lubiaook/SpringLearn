@@ -1,5 +1,6 @@
 package com.geek.test.redis.repository;
 
+import com.geek.test.redis.model.Coffee;
 import com.geek.test.redis.model.CoffeeOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -8,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author biaolu
  */
-public interface CoffeeRepository extends JpaRepository<CoffeeOrder,String> {
+public interface CoffeeRepository extends JpaRepository<Coffee,String> {
 }

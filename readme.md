@@ -70,17 +70,46 @@
  
 * **Spring Data MongoDB的Repository**
 > * **`@EnableMongoRepositories`**
+   >  * 注解在Application上 
 > * ***对应的接口*** 
    >  * `MongoRepository<T,ID>`
    >  * `PagingAndSortingRepository<T,ID>`
    >  * `CrudRepository<T,ID>`
+
+
 #### Spring对Redis的支持(缓存使用)
 
  * Redis 是一款开源的内存KV存储，支持多种数据结构
+    > * https://redis.io
+ * **Spring 对Redis的支持**
+    > * Spring Data Redis 
+      >>  * 支持客户端Jedis / Lettuce              
+      >>  * RedisTemplate
+      >>  * Repository 支持
+ * Jesid实例不是线程不安全：我们不能多个线程中共享同一个Jedis实例
+ * 通过JedisPool获得Jedis实例
+ * 直接使用Jedis中的方法
+ * Jedis 客户端的简单操作Redis 
  
- Jedis 客户端的简单使用 
- * 线程不安全
- 
+#### Jedis 客户端的简单使用
+```java
+@Bean
+@ConfigurationProperties("redis")
+public JedisPoolCoinfig jedisPoolConfig(){
+ return new JedisPoolConfig();
+}
+@Bean()
+public JedisPool jedisPool(@value("$redis.host}")String host){
+return  new JedisPool(jedisPoolConfig,host);
+}
+```
+#### **通过Docker启动Redis**
+* **官方指引**
+  > * https://hub.docker.com/_/redis
+* **docker 镜像获取**
+  > * docker pull redis 
+* **启动Redis**
+  > * docker run --name redis -d -p 6379:6379 redis
 #### Redis线上部署方案 
    *  哨兵模式
    *  集群模式

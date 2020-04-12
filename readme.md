@@ -110,12 +110,42 @@ return  new JedisPool(jedisPoolConfig,host);
   > * docker pull redis 
 * **启动Redis**
   > * docker run --name redis -d -p 6379:6379 redis
+* **docker中访问redis**
+
+  > * docker exec -it redis bash 
+  > * redis-cli 
+  > * key* 
+  > * HGETALL 
+   
+
+
 #### Redis线上部署方案 
-   *  哨兵模式
-   *  集群模式
+   *  **哨兵模式**
+      * **Redis Sentinel是Redis的一种高可用的方案**
+         > *  监控、通知、自动故障转移、服务发现
+      * **JedisSentinelPool** 
+      *             +----+ 
+                    | M1 | 
+                    | S1 | 
+                    +----+ 
+                      | 
+                      | 
+            +----+    |      +----+
+            | R2 |----+------| R3 | 
+            | S2 |           | S3 |
+            +----+           +----+
+            Configuration:quorum
+   * ***集群模式***
+      * **单节点模式(非集群模式)对单节点可以批量操作。集群模式不允许批量操作**
+      * **Redis Cluster**
+         > * 自然数据自动分片（分成16348个hash Slot）
+         > * 在部分节点失效时有一定时效性 
+      * **RedisCluster**
+         > * Jedis只从Master读取数据，如果要想要读写分离、可定制 
    
 #### 了解Spring的缓存抽象
 ##### 哪些缓存需要写在代码里 哪些需要用Redis?
+    *  一天内无变化，长时间没变化。直接放缓存
     *  缓存内部具备一致性，多个机器需要获取一直的缓存
     *  数据的读写比 写一次读十次需要加缓存 读写频率过高不需要使用缓存
 ##### *为不同的缓存提供一层抽象*
@@ -134,16 +164,41 @@ return  new JedisPool(jedisPoolConfig,host);
    > * @CacheConig 
 #### Redis在Spring中的其他用法
 
+
 ##### 与Redis建立连接
-***配置连接工厂***
-* LettuceConnectionFactory 与JedisConnectionFactory
-  * RedisStandaloneConfiguration 
-  * RedisSentinelConfiguration
-  * ResidClusterConfiguration 
+ **配置连接工厂**
+  * **LettuceConnectionFactory与JedisConnectionFactory**
+    >  * RedisStandaloneConfiguration 
+    >  * RedisSentinelConfiguration
+    >  * ResidClusterConfiguration 
 
-###### ***处理不同类型数据源的Repository***
-***如何区分这些Repository***
-* 根据实体的注解
-* 根据继承的接口类型
-* 扫描不同的包 
+ **RedisTemplate**
+  
+  * **RedisTemplate<K,V>**
+    >  * opsForxxx() 
+  * **StringRedisTemplate**
+ ***一定要设置过期时间***
+    
+ **Resid Repository**
+  * **实体注释**
+    >  * RedisHash ->对应entity 
+    >  * Id 
+    >  * Indexed   ->对应二级索引 
+    
+ **处理不同类型数据源的Repository**
+  * **如何区分这些Repository***
+  > * 根据实体的注解
+  > * 根据继承的接口类型
+  > * 扫描不同的包 
+  
+### 数据访问进阶
+##### Project Reactor 
 
+
+ 
+ **配置连接工厂**
+#### [左耳听风](https://time.geekbang.org/column/intro/48?utm_source=geektimeweb&utm_medium=pc&utm_term=pc_interstitial_233)
+
+### 如何阅读官方文档
+* [打开Spring官方文档](https://spring.io) 
+* 点击【**project**】
